@@ -31,3 +31,23 @@ VALUES ('154287565', 'Pepito Perez', 1, NOW(), 1);
 
 INSERT INTO `db_personas`.`personas` (`cedula`, `nombre`, `estado`, `fecha`, `activo`) 
 VALUES ('789546541', 'Susana Martinez', 2, NOW(), 0);
+
+DELIMITER $$
+CREATE PROCEDURE `db_personas`.`proc_select_estados`()	
+BEGIN 
+	SELECT `id`,
+        `nombre`
+    FROM `db_personas`.`estados`;
+END$$ 
+
+DELIMITER $$
+CREATE PROCEDURE `db_personas`.`proc_insert_estados` (
+	IN `Nombre` VARCHAR(50),
+	INOUT `Respuesta` INT
+)	
+BEGIN 
+	INSERT INTO `db_personas`.`estados` (`nombre`) 
+	VALUES (`Nombre`);
+    
+	SET `Respuesta` = 1;
+END$$ 
