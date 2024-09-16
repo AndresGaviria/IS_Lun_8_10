@@ -87,7 +87,7 @@ class Conexion:
         user=user_ptyhon;
         password=Clas3s1Nt2024_!""";
 
-    def ConnectionBasica(self) -> None:  
+    def ConexionBasica(self) -> None:  
         conexion = pyodbc.connect(self.strConnection);
         
         consulta: str = """SELECT * FROM personas""";
@@ -100,7 +100,7 @@ class Conexion:
         cursor.close();
         conexion.close();
 
-    def ConnectionBasica1(self) -> None:  
+    def ConexionBasica1(self) -> None:  
         conexion = pyodbc.connect(self.strConnection);
         
         consulta: str = """SELECT * FROM estados""";
@@ -120,7 +120,7 @@ class Conexion:
         for estado in lista:
             print(str(estado.GetId()) + " - " + estado.GetNombre());
 
-    def ConnectionBasica2(self) -> None:  
+    def ConexionBasica2(self) -> None:  
         conexion = pyodbc.connect(self.strConnection);
         
         consulta: str = """
@@ -190,12 +190,48 @@ class Conexion:
         cursor.close();
         conexion.close();
 
+    def ConexionProcedimiento(self) -> None:  
+        conexion = pyodbc.connect(self.strConnection);
+        cursor = conexion.cursor();
+        
+        consulta: str = """{CALL proc_select_estados();}""";
+        cursor.execute(consulta);
+
+        for elemento in cursor:
+            print(elemento);
+            
+        cursor.close();
+        conexion.close();
+
+    def ProcedimientoConSalida(self) -> None:
+        conexion = pyodbc.connect(self.strConnection);
+        cursor = conexion.cursor();
+
+        nombre: str = "Estado 1";
+
+        consulta: str = "{CALL proc_insert_estados('" + nombre + "', @Resultado);}";
+        cursor.execute(consulta);
+        # consulta: str = "{CALL proc_insert_estados(?, @Resultado);}";
+        # parametros = ( nombre );
+        # cursor.execute(consulta, parametros);
+
+        consulta: str = "SELECT @Resultado;";
+        cursor.execute(consulta);
+        print("Response Inserted Objects: " + str(cursor.fetchone()[0]));
+        cursor.execute("commit;");
+
+        cursor.close();
+        conexion.close();
+
 print("Conexion en Python con VS Code");
 conexion: Conexion = Conexion();
 # conexion.NonQueryBasico();
-# conexion.ConnectionBasica();
-# conexion.ConnectionBasica1();
-conexion.ConnectionBasica2();
+# conexion.ConexionBasica();
+# conexion.ConexionBasica1();
+# conexion.ConexionBasica2();
+# conexion.ConexionProcedimiento();
+conexion.ProcedimientoConSalida();
+conexion.ConexionProcedimiento();
 
 """
 py -3 --version
@@ -236,5 +272,25 @@ VALUES ('154287565', 'Pepito Perez', 1, NOW(), 1);
 
 INSERT INTO `db_personas`.`personas` (`cedula`, `nombre`, `estado`, `fecha`, `activo`) 
 VALUES ('789546541', 'Susana Martinez', 2, NOW(), 0);
+
+DELIMITER $$
+CREATE PROCEDURE `db_personas`.`proc_select_estados`()	
+BEGIN 
+	SELECT `id`,
+        `nombre`
+    FROM `db_personas`.`estados`;
+END$$ 
+
+DELIMITER $$
+CREATE PROCEDURE `db_personas`.`proc_insert_estados` (
+	IN `Nombre` VARCHAR(50),
+	INOUT `Respuesta` INT
+)	
+BEGIN 
+	INSERT INTO `db_personas`.`estados` (`nombre`) 
+	VALUES (`Nombre`);
+    
+	SET `Respuesta` = 1;
+END$$ 
 
 """ 
