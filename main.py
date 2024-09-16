@@ -212,8 +212,7 @@ class Conexion:
         consulta: str = "{CALL proc_insert_estados('" + nombre + "', @Resultado);}";
         cursor.execute(consulta);
         # consulta: str = "{CALL proc_insert_estados(?, @Resultado);}";
-        # parametros = ( nombre );
-        # cursor.execute(consulta, parametros);
+        # cursor.execute(consulta, nombre);
 
         consulta: str = "SELECT @Resultado;";
         cursor.execute(consulta);

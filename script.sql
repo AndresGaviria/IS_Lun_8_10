@@ -36,8 +36,8 @@ DELIMITER $$
 CREATE PROCEDURE `db_personas`.`proc_select_estados`()	
 BEGIN 
 	SELECT `id`,
-        `nombre`
-    FROM `db_personas`.`estados`;
+    `nombre`
+  FROM `db_personas`.`estados`;
 END$$ 
 
 DELIMITER $$
