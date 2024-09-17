@@ -51,3 +51,31 @@ BEGIN
     
 	SET `Respuesta` = 1;
 END$$ 
+
+DELIMITER $$
+CREATE PROCEDURE `db_personas`.`proc_select_personas`()	
+BEGIN 
+	SELECT `id`,
+      `cedula`,
+      `nombre`,
+      `estado`,
+      `fecha`,
+      `activo`
+    FROM `db_personas`.`personas`;
+END$$ 
+
+DELIMITER $$
+CREATE PROCEDURE `db_personas`.`proc_insert_personas` (
+	IN `Cedula` VARCHAR(50),
+	IN `Nombre` VARCHAR(50),
+	IN `Estado` INT,
+	IN `Fecha` DATETIME,
+	IN `Activo` BIT,
+	INOUT `Respuesta` INT
+)	
+BEGIN 
+	INSERT INTO `db_personas`.`personas` (`cedula`, `nombre`, `estado`, `fecha`, `activo`) 
+	VALUES (`Cedula`, `Nombre`, `Estado`, `Fecha`, `Activo`);
+    
+	SET `Respuesta` = 1;
+END$$ 
