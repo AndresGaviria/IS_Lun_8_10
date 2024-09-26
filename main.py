@@ -176,8 +176,6 @@ class Conexion:
         fecha: datetime = datetime.datetime.now();
         activo: bool = True;
 
-        print(fecha.strftime("%Y-%m-%d %H:%M:%S"));
-
         consulta: str = "INSERT INTO `personas` (`cedula`, `nombre`, `estado`, `fecha`, `activo`) ";
         consulta += "VALUES ('" + cedula + "', '" + nombre + "', " + str(estado) + ",";
         consulta += "'" + fecha.strftime("%Y-%m-%d %H:%M:%S") + "', " + str(activo) + ")";
@@ -207,12 +205,12 @@ class Conexion:
         conexion = pyodbc.connect(self.strConnection);
         cursor = conexion.cursor();
 
-        nombre: str = "Estado 1";
+        nombre: str = "Estado 32";
 
         consulta: str = "{CALL proc_insert_estados('" + nombre + "', @Resultado);}";
         cursor.execute(consulta);
         # consulta: str = "{CALL proc_insert_estados(?, @Resultado);}";
-        # cursor.execute(consulta, nombre);
+        # cursor.execute(consulta, (nombre));
 
         consulta: str = "SELECT @Resultado;";
         cursor.execute(consulta);
@@ -222,74 +220,44 @@ class Conexion:
         cursor.close();
         conexion.close();
 
+    def ProcedimientoInsert(self) -> None:
+        conexion = pyodbc.connect(self.strConnection);
+        cursor = conexion.cursor();
+
+        cedula: str = "4532569";
+        nombre: str = "Test Python 3";
+        estado: int = 1;
+        fecha: datetime = datetime.datetime.now();
+        activo: bool = True;
+
+        consulta: str = "{CALL proc_insert_personas( ";
+        consulta += "'" + cedula + "', '" + nombre + "', " + str(estado) + ",";
+        consulta += "'" + fecha.strftime("%Y-%m-%d %H:%M:%S") + "', " + str(activo);
+        consulta += ", @Resultado);}";
+        cursor.execute(consulta);
+
+        consulta: str = "SELECT @Resultado;";
+        cursor.execute(consulta);
+        print("Response Inserted Objects: " + str(cursor.fetchone()[0]));
+        cursor.execute("commit;");    
+                
+        cursor.close();
+        conexion.close();
+
 print("Conexion en Python con VS Code");
 conexion: Conexion = Conexion();
 # conexion.NonQueryBasico();
 # conexion.ConexionBasica();
 # conexion.ConexionBasica1();
-# conexion.ConexionBasica2();
 # conexion.ConexionProcedimiento();
-conexion.ProcedimientoConSalida();
-conexion.ConexionProcedimiento();
+# conexion.ProcedimientoConSalida();
+# conexion.ConexionProcedimiento();
+conexion.ProcedimientoInsert();
+conexion.ConexionBasica2();
 
 """
 py -3 --version
 py main.py
 py -m pip install pyodbc
-
--- MySQL
-CREATE USER 'user_ptyhon'@'localhost' IDENTIFIED BY 'Clas3s1Nt2024_!';
-GRANT CREATE, INSERT, UPDATE, DELETE, SELECT, FILE, EXECUTE ON *.* TO 'user_ptyhon'@'localhost' WITH GRANT OPTION;
-
-CREATE DATABASE db_personas;
-
-CREATE TABLE `db_personas`.`estados` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `nombre` VARCHAR(50) NOT NULL UNIQUE,
-  PRIMARY KEY (`id`)
-);
-
-CREATE TABLE `db_personas`.`personas` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `cedula` VARCHAR(50) NOT NULL ,
-  `nombre` VARCHAR(50) NOT NULL,
-  `estado` INT NOT NULL,
-  `fecha` DATETIME NOT NULL,
-  `activo` BIT NOT NULL,
-  PRIMARY KEY (`id`),
-  CONSTRAINT `fk_personas__estados` FOREIGN KEY (`estado`) REFERENCES `estados` (`id`)
-);
-
-INSERT INTO `db_personas`.`estados` (`nombre`) VALUES ('Casado-Casada');
-INSERT INTO `db_personas`.`estados` (`nombre`) VALUES ('Soltero-Soltera');
-INSERT INTO `db_personas`.`estados` (`nombre`) VALUES ('Viudo-Viuda');
-INSERT INTO `db_personas`.`estados` (`nombre`) VALUES ('Separado-Separada');
-INSERT INTO `db_personas`.`estados` (`nombre`) VALUES ('Lo que importa es que Diosito me quiere');
-
-INSERT INTO `db_personas`.`personas` (`cedula`, `nombre`, `estado`, `fecha`, `activo`) 
-VALUES ('154287565', 'Pepito Perez', 1, NOW(), 1);
-
-INSERT INTO `db_personas`.`personas` (`cedula`, `nombre`, `estado`, `fecha`, `activo`) 
-VALUES ('789546541', 'Susana Martinez', 2, NOW(), 0);
-
-DELIMITER $$
-CREATE PROCEDURE `db_personas`.`proc_select_estados`()	
-BEGIN 
-	SELECT `id`,
-        `nombre`
-    FROM `db_personas`.`estados`;
-END$$ 
-
-DELIMITER $$
-CREATE PROCEDURE `db_personas`.`proc_insert_estados` (
-	IN `Nombre` VARCHAR(50),
-	INOUT `Respuesta` INT
-)	
-BEGIN 
-	INSERT INTO `db_personas`.`estados` (`nombre`) 
-	VALUES (`Nombre`);
-    
-	SET `Respuesta` = 1;
-END$$ 
 
 """ 

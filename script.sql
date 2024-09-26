@@ -36,8 +36,8 @@ DELIMITER $$
 CREATE PROCEDURE `db_personas`.`proc_select_estados`()	
 BEGIN 
 	SELECT `id`,
-    `nombre`
-  FROM `db_personas`.`estados`;
+        `nombre`
+    FROM `db_personas`.`estados`;
 END$$ 
 
 DELIMITER $$
@@ -50,18 +50,6 @@ BEGIN
 	VALUES (`Nombre`);
     
 	SET `Respuesta` = 1;
-END$$ 
-
-DELIMITER $$
-CREATE PROCEDURE `db_personas`.`proc_select_personas`()	
-BEGIN 
-	SELECT `id`,
-      `cedula`,
-      `nombre`,
-      `estado`,
-      `fecha`,
-      `activo`
-    FROM `db_personas`.`personas`;
 END$$ 
 
 DELIMITER $$
