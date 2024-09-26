@@ -38,7 +38,7 @@ app.run('localhost', 4040);
 
 """
 py -3 --version
-py main.py
+py main2.py
 py -m pip install pyodbc
 py -m pip install Flask
 py -m pip install jsonify
