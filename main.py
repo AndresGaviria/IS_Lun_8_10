@@ -225,7 +225,7 @@ class Conexion:
         cursor = conexion.cursor();
 
         cedula: str = "4532569";
-        nombre: str = "Test Python 3";
+        nombre: str = "Test " + str(datetime.datetime.now());
         estado: int = 1;
         fecha: datetime = datetime.datetime.now();
         activo: bool = True;
@@ -259,5 +259,7 @@ conexion.ConexionBasica2();
 py -3 --version
 py main.py
 py -m pip install pyodbc
+py -m pip install Flask
+py -m pip install jsonify
 
 """ 
