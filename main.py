@@ -171,7 +171,7 @@ class Conexion:
         cursor = conexion.cursor();
 
         cedula: str = "7532564";
-        nombre: str = "Test Python";
+        nombre: str = "Test " + str(datetime.datetime.now());
         estado: int = 3;
         fecha: datetime = datetime.datetime.now();
         activo: bool = True;
