@@ -7,7 +7,7 @@ import pyodbc;
 import datetime;
 import decimal;
 
-print("API en Python con VS Code");
+print("API 2 en Python con VS Code");
 print(__name__);
 app = flask.Flask(__name__);
 
@@ -20,7 +20,7 @@ class Conexion:
         user=user_ptyhon;
         password=Clas3s1Nt2024_!""";
 
-    def CargarPersonas(self) -> None:  
+    def CargarPersonas(self) -> dict:  
         conexion = pyodbc.connect(self.strConnection);
         
         consulta: str = """SELECT * FROM personas""";
@@ -44,31 +44,31 @@ class Conexion:
         conexion.close();
         return respuesta;
 
-class Convert:
+class Convertir:
     @staticmethod
-    def ToDict(data: str) -> dict :
-        outcome = { };
+    def ADict(data: str) -> dict :
+        respuesta = { };
         try:
             data = data.replace("'", '"');
-            response = json.loads(data);
-            return response;
+            respuesta = json.loads(data);
+            return respuesta;
         except:
             print(sys.exc_info());
             return None;
 
-# http://localhost:4040/main3/GetData/{"Send":"Test"}
-@app.route('/main3/GetData/<string:income>', methods=["GET"]) # methods=["POST"]
-def GetData(income: str) -> str :
-    outcome = { };
+# http://localhost:4040/main3/CargarPersonas/{}
+@app.route('/main3/CargarPersonas/<string:entrada>', methods=["GET"]) # methods=["POST"]
+def CargarPersonas(entrada: str) -> str :
+    respuesta = { };
     try:
-        data = Convert.ToDict(income);
+        data = Convertir.ADict(entrada);
         conexion: Conexion = Conexion();
-        outcome["Entidades"] = conexion.CargarPersonas();
-        outcome["Response"] = "Ok";
-        return flask.jsonify(outcome);
+        respuesta["Entidades"] = conexion.CargarPersonas();
+        respuesta["Response"] = "Ok";
+        return flask.jsonify(respuesta);
     except:
-        outcome["Send"] = sys.exc_info();
-        return flask.jsonify(outcome);
+        respuesta["Send"] = sys.exc_info();
+        return flask.jsonify(respuesta);
 
 app.run('localhost', 4040);
 

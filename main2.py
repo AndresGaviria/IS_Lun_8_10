@@ -5,34 +5,34 @@ import sys;
 import json;
 import datetime;
 
-print("API en Python con VS Code");
+print("API 1 en Python con VS Code");
 print(__name__);
 app = flask.Flask(__name__);
 
-class Convert:
+class Convertir:
     @staticmethod
-    def ToDict(data: str) -> dict :
-        outcome = { };
+    def ADict(data: str) -> dict :
+        respuesta = { };
         try:
             data = data.replace("'", '"');
-            response = json.loads(data);
-            return response;
+            respuesta = json.loads(data);
+            return respuesta;
         except:
             print(sys.exc_info());
             return None;
 
-# http://localhost:4040/main2/GetData/{"Send":"Test"}
-@app.route('/main2/GetData/<string:income>', methods=["GET"]) # methods=["POST"]
-def GetData(income: str) -> str :
-    outcome = { };
+# http://localhost:4040/main2/ObtenerDatos/{"Send":"Test"}
+@app.route('/main2/ObtenerDatos/<string:entrada>', methods=["GET"]) # methods=["POST"]
+def ObtenerDatos(entrada: str) -> str :
+    respuesta = { };
     try:
-        data = Convert.ToDict(income);
-        outcome["Send"] = data["Send"];
-        outcome["Response"] = datetime.datetime.now();
-        return flask.jsonify(outcome);
+        data = Convertir.ADict(entrada);
+        respuesta["Send"] = data["Send"];
+        respuesta["Response"] = datetime.datetime.now();
+        return flask.jsonify(respuesta);
     except:
-        outcome["Send"] = sys.exc_info();
-        return flask.jsonify(outcome);
+        respuesta["Send"] = sys.exc_info();
+        return flask.jsonify(respuesta);
 
 app.run('localhost', 4040);
 

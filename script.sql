@@ -53,6 +53,12 @@ BEGIN
 END$$ 
 
 DELIMITER $$
+CREATE PROCEDURE `db_personas`.`proc_select_personas`()	
+BEGIN 
+	SELECT * FROM `db_personas`.`personas`;
+END$$ 
+
+DELIMITER $$
 CREATE PROCEDURE `db_personas`.`proc_insert_personas` (
 	IN `Cedula` VARCHAR(50),
 	IN `Nombre` VARCHAR(50),
