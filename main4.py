@@ -46,27 +46,27 @@ class PersonasRepositorio:
         return respuesta;
 
     def Insertar(self, datos: dict) -> dict:  
+        respuesta: dict = { };
+        
         conexion = pyodbc.connect(Configuracion.strConnection);
+        cursor = conexion.cursor();
         
         cedula: str = datos["Cedula"];
         nombre: str = datos["Nombre"];
-        estado: int = 1;
-        fecha: datetime = datetime.datetime.now();
-        activo: bool = True;
-        # estado: int = datos["Estado"];
-        # fecha: datetime = datetime.strptime(datos["Fecha"], "%Y-%m-%d %H:%M:%S");
-        # activo: bool = datos["Activo"];
-
+        estado: int = datos["Estado"];
+        fecha: datetime = datetime.datetime.strptime(datos["Fecha"], "%Y-%m-%d %H:%M:%S");
+        activo: bool = datos["Activo"];
+        
         consulta: str = "{CALL proc_insert_personas( ";
         consulta += "'" + cedula + "', '" + nombre + "', " + str(estado) + ",";
         consulta += "'" + fecha.strftime("%Y-%m-%d %H:%M:%S") + "', " + str(activo);
         consulta += ", @Resultado);}";
         cursor.execute(consulta);
-
+        
         consulta: str = "SELECT @Resultado;";
         cursor.execute(consulta);
-        print("Response Inserted Objects: " + str(cursor.fetchone()[0]));
-        cursor.execute("commit;");    
+        respuesta["Resultado"] = str(cursor.fetchone()[0]);
+        cursor.execute("commit;");
 
         cursor.close();
         conexion.close();
@@ -84,7 +84,7 @@ class PersonasAplicacion:
     def Insertar(self, datos: dict) -> None:
         respuesta: dict = { };
 
-        if not "Cedula" in datos.keys() and not "Nombre" in datos.keys() and not "Estado" in datos.keys() and not "Fecha" in datos.keys() and not "Activo" in datos.keys(): 
+        if not "Cedula" in datos.keys() or not "Nombre" in datos.keys() or not "Estado" in datos.keys() or not "Fecha" in datos.keys() or not "Activo" in datos.keys(): 
             respuesta["Error"] = "Falta informacion";
             return respuesta;
 
@@ -123,7 +123,7 @@ def Insertar(entrada: str) -> str :
     try:
         datos = Convertir.ADict(entrada);
         aplicacion: PersonasAplicacion = PersonasAplicacion();
-        respuesta["Entidades"] = aplicacion.Insertar(datos);
+        respuesta = aplicacion.Insertar(datos);
         respuesta["Response"] = "Ok";
         return flask.jsonify(respuesta);
     except:
