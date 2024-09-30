@@ -72,6 +72,54 @@ class PersonasRepositorio:
         conexion.close();
         return respuesta;
 
+    def Modificar(self, datos: dict) -> dict:  
+        respuesta: dict = { };
+        
+        conexion = pyodbc.connect(Configuracion.strConnection);
+        cursor = conexion.cursor();
+        
+        id: int = datos["Id"];
+        cedula: str = datos["Cedula"];
+        nombre: str = datos["Nombre"];
+        estado: int = datos["Estado"];
+        fecha: datetime = datetime.datetime.strptime(datos["Fecha"], "%Y-%m-%d %H:%M:%S");
+        activo: bool = datos["Activo"];
+        
+        consulta: str = "{CALL proc_update_personas( " + str(id) + ", ";
+        consulta += "'" + cedula + "', '" + nombre + "', " + str(estado) + ",";
+        consulta += "'" + fecha.strftime("%Y-%m-%d %H:%M:%S") + "', " + str(activo);
+        consulta += ", @Resultado);}";
+        cursor.execute(consulta);
+        
+        consulta: str = "SELECT @Resultado;";
+        cursor.execute(consulta);
+        respuesta["Resultado"] = str(cursor.fetchone()[0]);
+        cursor.execute("commit;");
+
+        cursor.close();
+        conexion.close();
+        return respuesta;
+
+    def Borrar(self, datos: dict) -> dict:  
+        respuesta: dict = { };
+        
+        conexion = pyodbc.connect(Configuracion.strConnection);
+        cursor = conexion.cursor();
+        
+        id: int = datos["Id"];
+        
+        consulta: str = "{CALL proc_delete_personas( " + str(id) + ", @Resultado);}";
+        cursor.execute(consulta);
+        
+        consulta: str = "SELECT @Resultado;";
+        cursor.execute(consulta);
+        respuesta["Resultado"] = str(cursor.fetchone()[0]);
+        cursor.execute("commit;");
+
+        cursor.close();
+        conexion.close();
+        return respuesta;
+
 class PersonasAplicacion:
     respositorio: PersonasRepositorio = None;
 
@@ -89,6 +137,24 @@ class PersonasAplicacion:
             return respuesta;
 
         return self.respositorio.Insertar(datos);
+
+    def Modificar(self, datos: dict) -> None:
+        respuesta: dict = { };
+
+        if not "Id" in datos.keys() or not "Cedula" in datos.keys() or not "Nombre" in datos.keys() or not "Estado" in datos.keys() or not "Fecha" in datos.keys() or not "Activo" in datos.keys(): 
+            respuesta["Error"] = "Falta informacion";
+            return respuesta;
+
+        return self.respositorio.Modificar(datos);
+
+    def Borrar(self, datos: dict) -> None:
+        respuesta: dict = { };
+
+        if not "Id" in datos.keys(): 
+            respuesta["Error"] = "Falta informacion";
+            return respuesta;
+
+        return self.respositorio.Borrar(datos);
 
 class Convertir:
     @staticmethod
@@ -124,6 +190,34 @@ def Insertar(entrada: str) -> str :
         datos = Convertir.ADict(entrada);
         aplicacion: PersonasAplicacion = PersonasAplicacion();
         respuesta = aplicacion.Insertar(datos);
+        respuesta["Response"] = "Ok";
+        return flask.jsonify(respuesta);
+    except:
+        respuesta["Send"] = sys.exc_info();
+        return flask.jsonify(respuesta);
+
+# http://localhost:4040/main4/Modificar/{"Id":"2", "Cedula":"159753", "Nombre": "Test 1", "Estado": "1", "Fecha": "2024-09-28 11:26:08", "Activo": "True"}
+@app.route('/main4/Modificar/<string:entrada>', methods=["GET"]) # methods=["POST"]
+def Modificar(entrada: str) -> str :
+    respuesta = { };
+    try:
+        datos = Convertir.ADict(entrada);
+        aplicacion: PersonasAplicacion = PersonasAplicacion();
+        respuesta = aplicacion.Modificar(datos);
+        respuesta["Response"] = "Ok";
+        return flask.jsonify(respuesta);
+    except:
+        respuesta["Send"] = sys.exc_info();
+        return flask.jsonify(respuesta);
+
+# http://localhost:4040/main4/Borrar/{"Id":"2"}
+@app.route('/main4/Borrar/<string:entrada>', methods=["GET"]) # methods=["POST"]
+def Borrar(entrada: str) -> str :
+    respuesta = { };
+    try:
+        datos = Convertir.ADict(entrada);
+        aplicacion: PersonasAplicacion = PersonasAplicacion();
+        respuesta = aplicacion.Borrar(datos);
         respuesta["Response"] = "Ok";
         return flask.jsonify(respuesta);
     except:

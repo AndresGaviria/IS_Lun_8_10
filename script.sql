@@ -60,16 +60,50 @@ END$$
 
 DELIMITER $$
 CREATE PROCEDURE `db_personas`.`proc_insert_personas` (
-	IN `Cedula` VARCHAR(50),
-	IN `Nombre` VARCHAR(50),
-	IN `Estado` INT,
-	IN `Fecha` DATETIME,
-	IN `Activo` BIT,
+	IN `_Cedula` VARCHAR(50),
+	IN `_Nombre` VARCHAR(50),
+	IN `_Estado` INT,
+	IN `_Fecha` DATETIME,
+	IN `_Activo` BIT,
 	INOUT `Respuesta` INT
 )	
 BEGIN 
 	INSERT INTO `db_personas`.`personas` (`cedula`, `nombre`, `estado`, `fecha`, `activo`) 
-	VALUES (`Cedula`, `Nombre`, `Estado`, `Fecha`, `Activo`);
+	VALUES (`_Cedula`, `_Nombre`, `_Estado`, `_Fecha`, `_Activo`);
+    
+	SET `Respuesta` = 1;
+END$$ 
+
+DELIMITER $$
+CREATE PROCEDURE `db_personas`.`proc_update_personas` (
+	IN `_Id` INT,
+	IN `_Cedula` VARCHAR(50),
+	IN `_Nombre` VARCHAR(50),
+	IN `_Estado` INT,
+	IN `_Fecha` DATETIME,
+	IN `_Activo` BIT,
+	INOUT `Respuesta` INT
+)	
+BEGIN 
+	UPDATE `db_personas`.`personas`
+	SET `cedula` = `_Cedula`, 
+		`nombre` = `_Nombre`, 
+		`estado` = `_Estado`, 
+		`fecha` = `_Fecha`, 
+		`activo` = `_Activo`
+	WHERE `id` = `_Id`;
+    
+	SET `Respuesta` = 1;
+END$$
+
+DELIMITER $$
+CREATE PROCEDURE `db_personas`.`proc_delete_personas` (
+	IN `_Id` INT,
+	INOUT `Respuesta` INT
+)	
+BEGIN 
+	DELETE FROM `db_personas`.`personas`
+	WHERE `id` = `_Id`;
     
 	SET `Respuesta` = 1;
 END$$ 
