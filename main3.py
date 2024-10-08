@@ -20,29 +20,34 @@ class Conexion:
         user=user_ptyhon;
         password=Clas3s1Nt2024_!""";
 
-    def CargarPersonas(self) -> dict:  
-        conexion = pyodbc.connect(self.strConnection);
-        
-        consulta: str = """SELECT * FROM personas""";
-        cursor = conexion.cursor();
-        cursor.execute(consulta);
-
-        respuesta: dict = { };
-        contador = 0;
-        for elemento in cursor:
-            temporal: dict = { };
-            temporal["Id"] = elemento[0];
-            temporal["Cedula"] = elemento[1];
-            temporal["Nombre"] = elemento[2];
-            temporal["Estado"] = elemento[3];
-            temporal["Fecha"] = elemento[4];
-            temporal["Activo"] = elemento[5];
-            respuesta[str(contador)] = temporal;
-            contador = contador + 1;
+    def CargarPersonas(self) -> dict:
+        respuesta = { };
+        try:
+            conexion = pyodbc.connect(self.strConnection);
             
-        cursor.close();
-        conexion.close();
-        return respuesta;
+            consulta: str = """SELECT * FROM personas""";
+            cursor = conexion.cursor();
+            cursor.execute(consulta);
+
+            respuesta: dict = { };
+            contador = 0;
+            for elemento in cursor:
+                temporal: dict = { };
+                temporal["Id"] = elemento[0];
+                temporal["Cedula"] = elemento[1];
+                temporal["Nombre"] = elemento[2];
+                temporal["Estado"] = elemento[3];
+                temporal["Fecha"] = elemento[4];
+                temporal["Activo"] = elemento[5];
+                respuesta[str(contador)] = temporal;
+                contador = contador + 1;
+                
+            cursor.close();
+            conexion.close();
+            return respuesta;
+        except Exception as ex:
+            respuesta["Error"] = str(ex);
+            return respuesta;
 
 class Convertir:
     @staticmethod
