@@ -9,8 +9,6 @@ from Utilidades import Configuracion, Convertir;
 
 print(__name__);
 app = flask.Flask(__name__);
-fecha: datetime = datetime.datetime.now();
-print(fecha.strftime("%Y-%m-%d %H:%M:%S"));
 
 # http://localhost:4040/Servicios/Listar/{}
 @app.route('/Servicios/Listar/<string:entrada>', methods=["GET"]) # methods=["POST"]
