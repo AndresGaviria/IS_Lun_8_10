@@ -9,6 +9,8 @@ from Utilidades import Configuracion, Convertir;
 
 print(__name__);
 app = flask.Flask(__name__);
+fecha: datetime = datetime.datetime.now();
+print(fecha.strftime("%Y-%m-%d %H:%M:%S"));
 
 # http://localhost:4040/Servicios/Listar/{}
 @app.route('/Servicios/Listar/<string:entrada>', methods=["GET"]) # methods=["POST"]
@@ -73,8 +75,7 @@ py -3 --version
 py Servicios.py
 
 http://localhost:4040/Servicios/Listar/{}
-http://localhost:4040/Servicios/Insertar/{}
-http://localhost:4040/Servicios/Modificar/{}
-http://localhost:4040/Servicios/Borrar/{}
-
+http://localhost:4040/Servicios/Insertar/{'Activo':true, 'Cedula':'1242342', 'Estado':1,'Nombre':'Pruebas', 'Fecha':'2024-10-28 11:28:38'}
+http://localhost:4040/Servicios/Modificar/{'Activo':true, 'Cedula':'1242342', 'Estado':1,'Nombre':'Test 123', 'Fecha':'2024-10-28 11:28:38', 'Id':3}
+http://localhost:4040/Servicios/Borrar/{'Activo':true, 'Cedula':'1242342', 'Estado':1,'Nombre':'Test 123', 'Fecha':'2024-10-28 11:28:38', 'Id':3}
 """ 
