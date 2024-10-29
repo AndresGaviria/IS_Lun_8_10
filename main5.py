@@ -53,9 +53,4 @@ py main5.py
 py -m pip install pycryptodome
 
 py -m pip uninstall pycryptodome
-
-SELECT AES_ENCRYPT('Test', 'ytuysy76887');
-SELECT AES_DECRYPT(AES_ENCRYPT('Test', 'ytuysy76887'), 'ytuysy76887');
-Tablas
-  `nombre` blob NOT NULL,
 """ 
